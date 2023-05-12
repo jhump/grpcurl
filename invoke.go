@@ -264,8 +264,12 @@ func invokeServerStream(ctx context.Context, stub grpcdynamic.Stub, md *desc.Met
 	// Now we can actually invoke the RPC!
 	str, err := stub.InvokeRpcServerStream(ctx, md, req)
 
-	if respHeaders, err := str.Header(); err == nil {
-		handler.OnReceiveHeaders(respHeaders)
+	if err == nil {
+		var respHeaders metadata.MD
+		respHeaders, err := str.Header()
+		if err == nil {
+			handler.OnReceiveHeaders(respHeaders)
+		}
 	}
 
 	// Download each response message
